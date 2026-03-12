@@ -1,10 +1,12 @@
 import { NavLink, Link } from "react-router-dom";
 import { useThemeContext } from "../context/ThemeContext";
 import { useFavorites } from "../context/FavoritesContext";
+import { useAuth } from "../context/AuthContext";
 
 function Header() {
     const { theme, toggleTheme } = useThemeContext();
     const { favorites } = useFavorites();
+    const { user, isAdmin, logout } = useAuth();
 
     return (
         <header className="app-header">
@@ -16,24 +18,44 @@ function Header() {
             <nav className="main-nav">
             <NavLink to="/pokemon">Pokémon</NavLink>
             <NavLink to="/types">Tipos</NavLink>
-            <NavLink to="/favorites" className="nav-favorites">
+            {user && (
+                <NavLink to="/favorites" className="nav-favorites">
                 ♥ Favoritos
                 {favorites.length > 0 && (
-                <span className="favorites-badge">{favorites.length}</span>
+                    <span className="favorites-badge">{favorites.length}</span>
                 )}
-            </NavLink>
+                </NavLink>
+            )}
+            {isAdmin && <NavLink to="/dashboard">Dashboard</NavLink>}
             </nav>
         </div>
 
-        <button
+        <div className="header-right">
+            {user ? (
+            <div className="header-user">
+                <span className="header-username">
+                {user.user_metadata?.username ?? user.email}
+                </span>
+                <button type="button" className="btn secondary btn-sm" onClick={logout}>
+                Salir
+                </button>
+            </div>
+            ) : (
+            <Link to="/login" className="btn btn-sm">
+                Iniciar sesión
+            </Link>
+            )}
+
+            <button
             type="button"
             className="theme-toggle"
             onClick={toggleTheme}
             aria-label="Cambiar tema"
             title="Cambiar tema"
-        >
+            >
             {theme === "dark" ? "🌙" : "☀️"}
-        </button>
+            </button>
+        </div>
         </header>
     );
 }
