@@ -987,3 +987,97 @@ body {
 .page h1:first-child + p {
     margin-top: 0.5rem;
 }
+
+/* -------- Favoritos -------- */
+.nav-favorites {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.favorites-badge {
+    background: #e3350d;
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    border-radius: 999px;
+    padding: 1px 5px;
+    line-height: 1.4;
+}
+
+.btn-favorite {
+    display: block;
+    width: 100%;
+    margin: 0.75rem 0 0.25rem;
+    padding: 0.5rem 1rem;
+    border: 2px solid #e3350d;
+    border-radius: 8px;
+    background: transparent;
+    color: #e3350d;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+
+.btn-favorite:hover {
+    background: #e3350d;
+    color: #fff;
+}
+
+.btn-favorite--active {
+    background: #e3350d;
+    color: #fff;
+}
+
+.btn-favorite--active:hover {
+    background: transparent;
+    color: #e3350d;
+}
+
+.favorites-empty {
+    text-align: center;
+    padding: 3rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    color: var(--text-muted, #6b7280);
+}
+
+.favorites-card {
+    position: relative;
+}
+
+.favorites-card-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+    gap: 0.25rem;
+}
+
+.btn-remove-favorite {
+    position: absolute;
+    top: 0.4rem;
+    right: 0.4rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    border: none;
+    background: #e3350d;
+    color: #fff;
+    font-size: 0.7rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.15s;
+}
+
+.favorites-card:hover .btn-remove-favorite {
+    opacity: 1;
+}

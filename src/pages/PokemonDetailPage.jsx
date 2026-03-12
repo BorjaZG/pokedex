@@ -1,6 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import { useAsync } from "../hooks/useAsync";
 import { pokemonService } from "../services/pokemonService";
+import { useFavorites } from "../context/FavoritesContext";
 import LoadingSpinner from "../components/LoadingSpinner";
 import ErrorMessage from "../components/ErrorMessage";
 
@@ -29,6 +30,7 @@ const TYPE_COLORS = {
 function PokemonDetailPage() {
     const { id } = useParams();
     const { data, loading, error } = useAsync(() => pokemonService.getById(id), [id]);
+    const { isFavorite, addFavorite, removeFavorite } = useFavorites();
 
     if (loading) return <LoadingSpinner />;
     if (error) return <ErrorMessage message={error} />;
@@ -40,8 +42,8 @@ function PokemonDetailPage() {
 
     const mainType = data.types[0]?.type.name;
     const typeColor = TYPE_COLORS[mainType] || "#e5e7eb";
-
     const paddedId = String(data.id).padStart(3, "0");
+    const favorited = isFavorite(data.id);
 
     return (
         <section className="page pokemon-detail">
@@ -81,6 +83,18 @@ function PokemonDetailPage() {
                 <img src={sprite} alt={data.name} />
                 </div>
             </div>
+
+            {/* BOTÓN FAVORITO */}
+            <button
+                type="button"
+                className={`btn-favorite${favorited ? " btn-favorite--active" : ""}`}
+                onClick={() =>
+                    favorited ? removeFavorite(data.id) : addFavorite(data.id)
+                }
+                aria-label={favorited ? "Quitar de favoritos" : "Añadir a favoritos"}
+            >
+                {favorited ? "♥ En favoritos" : "♡ Añadir a favoritos"}
+            </button>
 
             {/* ZONA DE INFO INFERIOR */}
             <footer className="pk-card-footer">
