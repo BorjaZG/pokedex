@@ -6,7 +6,7 @@ import { useAuth } from "../context/AuthContext";
 function Header() {
     const { theme, toggleTheme } = useThemeContext();
     const { favorites } = useFavorites();
-    const { user, isAdmin, logout } = useAuth();
+    const { user, logout } = useAuth();
 
     return (
         <header className="app-header">
@@ -26,7 +26,7 @@ function Header() {
                 )}
                 </NavLink>
             )}
-            {isAdmin && <NavLink to="/dashboard">Dashboard</NavLink>}
+            {user && <NavLink to="/dashboard">Dashboard</NavLink>}
             </nav>
         </div>
 
