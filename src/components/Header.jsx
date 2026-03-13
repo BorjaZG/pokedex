@@ -8,6 +8,9 @@ function Header() {
     const { favorites } = useFavorites();
     const { user, logout } = useAuth();
 
+    const avatarUrl = user?.user_metadata?.avatar_url;
+    const username  = user?.user_metadata?.username ?? user?.email;
+
     return (
         <header className="app-header">
         <div className="header-left">
@@ -33,9 +36,16 @@ function Header() {
         <div className="header-right">
             {user ? (
             <div className="header-user">
-                <span className="header-username">
-                {user.user_metadata?.username ?? user.email}
-                </span>
+                <Link to="/profile" className="header-avatar-link" title="Mi perfil">
+                {avatarUrl ? (
+                    <img src={avatarUrl} alt="Avatar" className="header-avatar" />
+                ) : (
+                    <span className="header-avatar-placeholder">
+                    {username?.[0]?.toUpperCase() ?? "?"}
+                    </span>
+                )}
+                </Link>
+                <span className="header-username">{username}</span>
                 <button type="button" className="btn secondary btn-sm" onClick={logout}>
                 Salir
                 </button>

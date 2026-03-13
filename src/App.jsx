@@ -12,6 +12,7 @@ import TypeListPage from "./pages/TypeListPage";
 import TypeDetailPage from "./pages/TypeDetailPage";
 import FavoritesPage from "./pages/FavoritesPage";
 import DashboardPage from "./pages/DashboardPage";
+import ProfilePage from "./pages/ProfilePage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import UnauthorizedPage from "./pages/UnauthorizedPage";
@@ -28,7 +29,6 @@ function App() {
 
               <main className="app-main">
                 <Routes>
-                  {/* Rutas públicas */}
                   <Route path="/" element={<HomePage />} />
                   <Route path="/pokemon" element={<PokemonListPage />} />
                   <Route path="/pokemon/:id" element={<PokemonDetailPage />} />
@@ -38,23 +38,9 @@ function App() {
                   <Route path="/register" element={<RegisterPage />} />
                   <Route path="/unauthorized" element={<UnauthorizedPage />} />
 
-                  {/* Rutas protegidas (requieren login) */}
-                  <Route
-                    path="/favorites"
-                    element={
-                      <ProtectedRoute>
-                        <FavoritesPage />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/dashboard"
-                    element={
-                      <ProtectedRoute>
-                        <DashboardPage />
-                      </ProtectedRoute>
-                    }
-                  />
+                  <Route path="/favorites" element={<ProtectedRoute><FavoritesPage /></ProtectedRoute>} />
+                  <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+                  <Route path="/profile"   element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
 
                   <Route path="*" element={<NotFoundPage />} />
                 </Routes>

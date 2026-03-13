@@ -58,13 +58,20 @@ export function AuthProvider({ children }) {
     dispatch({ type: "LOGOUT" });
   };
 
+  /** Actualiza datos del perfil (username, avatar_url…) en Supabase */
+  const updateProfile = async (metadata) => {
+    const { data, error } = await authService.updateProfile(metadata);
+    if (error) throw error;
+    dispatch({ type: "SET_SESSION", payload: data.session ?? state.session });
+  };
+
   /** Rol del usuario: 'admin' | 'user' | null */
   const role = state.user?.user_metadata?.role ?? null;
   const isAdmin = role === "admin";
 
   return (
     <AuthContext.Provider
-      value={{ ...state, role, isAdmin, login, register, logout }}
+      value={{ ...state, role, isAdmin, login, register, logout, updateProfile }}
     >
       {children}
     </AuthContext.Provider>
