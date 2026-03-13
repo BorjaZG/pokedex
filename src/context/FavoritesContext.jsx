@@ -1,5 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useEffect, useReducer } from "react";
+import { useAuth } from "./AuthContext";
+import { favoritesService } from "../services/favoritesService";
 
 const FavoritesContext = createContext(null);
 
@@ -8,6 +10,8 @@ const STORAGE_KEY = "favorites";
 // --- Reducer ---
 function favoritesReducer(state, action) {
   switch (action.type) {
+    case "SET":
+      return action.payload;
     case "ADD":
       if (state.includes(action.payload)) return state;
       return [...state, action.payload];
@@ -29,15 +33,46 @@ function loadFromStorage() {
 
 // --- Provider ---
 export function FavoritesProvider({ children }) {
-  const [favorites, dispatch] = useReducer(favoritesReducer, [], loadFromStorage);
+  const { user, loading: authLoading } = useAuth();
+  const [favorites, dispatch] = useReducer(favoritesReducer, []);
 
-  // Persistir en localStorage cada vez que cambia el estado
+  // Cuando la auth resuelve, cargamos de la fuente correcta
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
-  }, [favorites]);
+    if (authLoading) return;
 
-  const addFavorite = (id) => dispatch({ type: "ADD", payload: id });
-  const removeFavorite = (id) => dispatch({ type: "REMOVE", payload: id });
+    if (user) {
+      favoritesService
+        .getAll()
+        .then((ids) => dispatch({ type: "SET", payload: ids }))
+        .catch(() => dispatch({ type: "SET", payload: [] }));
+    } else {
+      dispatch({ type: "SET", payload: loadFromStorage() });
+    }
+  }, [user, authLoading]);
+
+  // Persistir en localStorage solo cuando no hay sesión activa
+  useEffect(() => {
+    if (!user) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
+    }
+  }, [favorites, user]);
+
+  const addFavorite = async (id) => {
+    dispatch({ type: "ADD", payload: id });
+    if (user) {
+      try { await favoritesService.add(id); }
+      catch { dispatch({ type: "REMOVE", payload: id }); } // revert on error
+    }
+  };
+
+  const removeFavorite = async (id) => {
+    dispatch({ type: "REMOVE", payload: id });
+    if (user) {
+      try { await favoritesService.remove(id); }
+      catch { dispatch({ type: "ADD", payload: id }); } // revert on error
+    }
+  };
+
   const isFavorite = (id) => favorites.includes(id);
 
   return (

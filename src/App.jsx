@@ -11,6 +11,7 @@ import PokemonDetailPage from "./pages/PokemonDetailPage";
 import TypeListPage from "./pages/TypeListPage";
 import TypeDetailPage from "./pages/TypeDetailPage";
 import FavoritesPage from "./pages/FavoritesPage";
+import DashboardPage from "./pages/DashboardPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import UnauthorizedPage from "./pages/UnauthorizedPage";
@@ -46,13 +47,11 @@ function App() {
                       </ProtectedRoute>
                     }
                   />
-
-                  {/* Ruta de admin (se completará en feat/dashboard) */}
                   <Route
                     path="/dashboard"
                     element={
-                      <ProtectedRoute requiredRole="admin">
-                        <div className="page"><h1>Dashboard (próximamente)</h1></div>
+                      <ProtectedRoute>
+                        <DashboardPage />
                       </ProtectedRoute>
                     }
                   />
