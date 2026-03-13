@@ -23,6 +23,10 @@ export const authService = {
   /** Sesión activa actual (desde localStorage) */
   getSession: () => supabase.auth.getSession(),
 
+  /** Actualiza el user_metadata del usuario autenticado */
+  updateProfile: (metadata) =>
+    supabase.auth.updateUser({ data: metadata }),
+
   /**
    * Suscripción a cambios de estado de autenticación.
    * Devuelve la función para cancelar la suscripción.
