@@ -28,10 +28,12 @@ Aplicación web SPA construida con React 19 que permite explorar los 151 Pokémo
 - **Capa de servicios** — `pokemonService`, `favoritesService`, `authService`, `cloudinaryService`, `typeService`, `moveService`. Ningún componente hace `fetch` directo.
 - **Dashboard** — Vista diferenciada por rol. Admin: tabla completa con estadísticas de los 151 Pokémon. Usuario: tabla de sus favoritos con resumen. Ambas con búsqueda, filtro por tipo y ordenación reactiva.
 - **Testing unitario** — 20 tests en 4 ficheros (reducers, hook `useAsync`, componente `PokemonTable`).
+- **Testing E2E** — 15 tests con Playwright cubriendo rutas públicas, redirecciones de rutas protegidas y flujos de usuario autenticado (favoritos, dashboard, perfil, logout).
 
 ### Extra
 - **Control de versiones** — Flujo de ramas por funcionalidad (`feat/*`), commits semánticos.
 - **Servicio externo** — Cloudinary: subida directa de avatar con recorte interactivo circular (zoom + arrastre) usando `react-easy-crop` y Canvas API. URL guardada en `user_metadata` de Supabase.
+- **Testing E2E** — Playwright con 3 proyectos: `setup` (autenticación), `public` (9 tests sin login) y `authenticated` (6 tests con sesión guardada). Usa `storageState` para reutilizar la sesión entre tests.
 - **Despliegue** — Docker multi-etapa (Node build + nginx serve) para local. Vercel para cloud.
 
 ---
@@ -67,6 +69,8 @@ npm run preview      # sirve el build en http://localhost:4173
 
 ## Tests
 
+### Unitarios (Vitest + React Testing Library)
+
 ```bash
 npm run test                # modo watch
 npm run test:coverage       # informe de cobertura en /coverage
@@ -77,6 +81,26 @@ Los tests cubren:
 - `favoritesReducer` — ADD, REMOVE, SET, deduplicación
 - `useAsync` — estados loading/data/error y re-ejecución por dependencias
 - `PokemonTable` — render, filtro por nombre, filtro por tipo, estado vacío, ordenación
+
+### E2E (Playwright)
+
+Añade las credenciales de una cuenta de prueba al `.env`:
+
+```
+E2E_TEST_EMAIL=tu@email.com
+E2E_TEST_PASSWORD=tupassword
+```
+
+```bash
+npm run test:e2e            # ejecuta los 3 proyectos en orden
+npm run test:e2e:ui         # modo interactivo con inspector
+npm run test:e2e:report     # abre el informe HTML del último run
+```
+
+Los tests cubren:
+- **Rutas públicas** — homepage, listado y detalle de Pokémon, tipos, 404
+- **Redirecciones** — `/favorites`, `/dashboard` y `/profile` redirigen a `/login` sin sesión
+- **Flujos autenticados** — acceso a rutas protegidas, añadir/quitar favoritos, logout
 
 ---
 
@@ -112,7 +136,8 @@ src/
 │   └── dashboard/    # AdminDashboard, UserDashboard
 ├── utils/            # cropImage (canvas)
 ├── styles/           # globals.css (tema claro/oscuro)
-└── test/             # Vitest + RTL
+├── test/             # Vitest + RTL
+└── (raíz) e2e/       # Playwright (public + authenticated)
 ```
 
 **Flujo de datos:** las páginas consumen hooks/contextos → los contextos llaman a servicios → los servicios usan el cliente de Supabase o `fetch` a PokéAPI. Ningún componente hace peticiones directamente.
